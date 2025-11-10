@@ -223,8 +223,9 @@ class GPT(nn.Module):
         dmodel_lr_scale = (model_dim / 768) ** -0.5
         if rank == 0:
             print(f"Scaling the LR for the AdamW parameters ∝1/√({model_dim}/768) = {dmodel_lr_scale:.6f}")
+        # BUG 3: Mixed up which params go to which optimizer!
         adam_groups = [
-            dict(params=lm_head_params, lr=unembedding_lr * dmodel_lr_scale),
+            dict(params=matrix_params, lr=unembedding_lr * dmodel_lr_scale),  # BUG: matrix params should use Muon!
             dict(params=embedding_params, lr=embedding_lr * dmodel_lr_scale),
         ]
         adamw_kwargs = dict(betas=(0.8, 0.95), eps=1e-10, weight_decay=weight_decay)
@@ -233,7 +234,7 @@ class GPT(nn.Module):
         # Create the Muon optimizer for the linear layers
         muon_kwargs = dict(lr=matrix_lr, momentum=0.95)
         MuonFactory = DistMuon if ddp else Muon
-        muon_optimizer = MuonFactory(matrix_params, **muon_kwargs)
+        muon_optimizer = MuonFactory(lm_head_params, **muon_kwargs)  # BUG: lm_head should use AdamW!
         # Combine them the two optimizers into one list
         optimizers = [adamw_optimizer, muon_optimizer]
         for opt in optimizers:

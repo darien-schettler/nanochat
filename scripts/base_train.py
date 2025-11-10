@@ -158,7 +158,8 @@ def get_lr_multiplier(it):
     warmup_iters = round(warmup_ratio * num_iterations)
     warmdown_iters = round(warmdown_ratio * num_iterations)
     if it < warmup_iters:
-        return (it + 1) / warmup_iters
+        # BUG 2: Warmup calculation is off by factor of 100!
+        return (it + 1) / (warmup_iters * 100)  # BUG: Should be just warmup_iters!
     elif it <= num_iterations - warmdown_iters:
         return 1.0
     else:
@@ -268,8 +269,9 @@ for step in range(num_iterations + 1):
         with autocast_ctx:
             loss = model(x, y)
         train_loss = loss.detach() # for logging
-        loss = loss / grad_accum_steps # each .backward() is a grad sum => normalize loss here
-        loss.backward()
+        # BUG 1: Forgot to normalize loss by grad_accum_steps!
+        # loss = loss / grad_accum_steps # each .backward() is a grad sum => normalize loss here
+        loss.backward()  # BUG: This will accumulate unnormalized losses!
         x, y = next(train_loader) # prefetch the next batch while the GPU is busy with forward/backward
     # gradient clipping
     grad_clip_enabled = grad_clip > 0.0

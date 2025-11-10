@@ -111,7 +111,8 @@ def sft_data_generator(dataset, batch_size):
             row_targets = ids_tensor[1:]
             # mask[1:] omits the mask for the BOS token, which is never a target atm so it's ok
             mask_tensor = torch.tensor(mask[1:], dtype=torch.long)
-            row_targets[mask_tensor == 0] = -1 # mask out targets where mask is 0
+            # BUG 4: Inverted mask logic - training on the wrong tokens!
+            row_targets[mask_tensor == 1] = -1 # BUG: Should mask where mask is 0, not 1!
             targets[i, :n-1] = row_targets
         inputs = inputs.to(device) # move to device
         targets = targets.to(device)
