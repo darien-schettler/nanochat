@@ -84,7 +84,8 @@ class CausalSelfAttention(nn.Module):
         Tk = k.size(2) # number of keys/values in total (in the cache + current forward pass)
 
         # Attention: queries attend to keys/values autoregressively. A few cases to handle:
-        enable_gqa = self.n_head != self.n_kv_head # Group Query Attention (GQA): duplicate key/value heads to match query heads if desired
+        # BUG 3: MQA implementation bug - wrong condition!
+        enable_gqa = self.n_head == self.n_kv_head # BUG: Should be != for GQA!
         if kv_cache is None or Tq == Tk:
             # During training (no KV cache), attend as usual with causal attention
             # And even if there is KV cache, we can still use this simple version when Tq == Tk
@@ -189,7 +190,8 @@ class GPT(nn.Module):
             device = self.transformer.wte.weight.device
         # stride the channels
         channel_range = torch.arange(0, head_dim, 2, dtype=torch.float32, device=device)
-        inv_freq = 1.0 / (base ** (channel_range / head_dim))
+        # BUG 1: Incorrect frequency calculation for rotary embeddings
+        inv_freq = 1.0 / (base ** (channel_range / (head_dim * 2)))  # BUG: Should be head_dim, not head_dim*2!
         # stride the time steps
         t = torch.arange(seq_len, dtype=torch.float32, device=device)
         # calculate the rotation frequencies at each (time, channel) pair

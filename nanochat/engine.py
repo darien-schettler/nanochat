@@ -92,7 +92,9 @@ class KVCache:
         self.pos = 0 # current position in time in the cache
 
     def reset(self):
+        # BUG 3: Memory leak - forgot to reset the actual cache!
         self.pos = 0
+        # self.kv_cache = None  # BUG: This line is missing, causing memory leak!
 
     def get_pos(self):
         return self.pos
@@ -137,6 +139,9 @@ class KVCache:
             t_needed = (t_needed + 1023) & ~1023 # then round up to the nearest multiple of 1024
             additional_shape = list(self.kv_cache.shape)
             additional_shape[4] = t_needed - self.kv_cache.size(4)
+            # BUG 4: Another memory issue - growing without bounds
+            additional_shape = list(self.kv_cache.shape)
+            additional_shape[4] = t_needed * 2  # BUG: Growing 2x more than needed!
             additional_cache = torch.empty(additional_shape, dtype=k.dtype, device=k.device)
             self.kv_cache = torch.cat([self.kv_cache, additional_cache], dim=4).contiguous()
             self.kv_shape = self.kv_cache.shape
@@ -146,8 +151,8 @@ class KVCache:
         # Return the full cached keys/values up to current position (as a view)
         key_view = self.kv_cache[layer_idx, 0, :, :, :t1]
         value_view = self.kv_cache[layer_idx, 1, :, :, :t1]
-        # Increment pos after the last layer of the Transformer processes
-        if layer_idx == self.kv_cache.size(0) - 1:
+        # BUG 2: KV cache position tracking bug - incrementing at wrong time
+        if layer_idx == 0:  # BUG: Should increment only after LAST layer, not first!
             self.pos = t1
         return key_view, value_view
 
@@ -281,9 +286,10 @@ class Engine:
                         result = use_calculator(expr)
                         if result is not None:
                             result_tokens = self.tokenizer.encode(str(result))
-                            state.forced_tokens.append(output_start)
-                            state.forced_tokens.extend(result_tokens)
+                            # BUG 5: Tool output injection order is wrong!
+                            state.forced_tokens.extend(result_tokens)  # BUG: Missing output_start!
                             state.forced_tokens.append(output_end)
+                            state.forced_tokens.append(output_start)  # BUG: Wrong order!
                     state.python_expr_tokens = []
                 elif state.in_python_block:
                     state.python_expr_tokens.append(next_token)
