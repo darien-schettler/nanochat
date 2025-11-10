@@ -82,11 +82,6 @@ git checkout bug-hunt-easy
 jupyter notebook tokenizer_debug.ipynb
 ```
 
-**Bugs to find:**
-1. BOS token not being prepended
-2. Wrong tensor dtype causing CUDA errors
-3. Off-by-one error in target creation
-
 ### Level 2: Medium - Training Pipeline
 **Branch:** `bug-hunt-medium`  
 **Notebook:** `training_pipeline_debug.ipynb`  
@@ -103,12 +98,6 @@ Topics covered:
 git checkout bug-hunt-medium
 jupyter notebook training_pipeline_debug.ipynb
 ```
-
-**Bugs to find:**
-1. Missing gradient accumulation normalization
-2. Learning rate warmup off by 100x
-3. Wrong parameters assigned to optimizers
-4. Inverted SFT masking logic
 
 ### Level 3: Hard - Architecture & Performance
 **Branch:** `bug-hunt-hard`  
@@ -127,13 +116,6 @@ Topics covered:
 git checkout bug-hunt-hard
 jupyter notebook architecture_challenges.ipynb
 ```
-
-**Bugs to find:**
-1. Incorrect rotary embedding frequency calculation
-2. KV cache position tracking bug
-3. MQA enable condition inverted
-4. Memory leak in KV cache
-5. Tool output tokens in wrong order
 
 ## 🎓 Learning Objectives
 
@@ -193,11 +175,14 @@ Once you've fixed all bugs in a level:
 
 If you're stuck on a bug:
 
-1. Re-read the notebook hints
+1. Re-read the notebook hints carefully
 2. Look for "BUG" comments in the code
-3. Check the symptom description
-4. Compare with the `master` branch (but try not to peek!)
-5. Remember: The satisfaction of finding the bug is worth the struggle!
+3. Check the symptom description - what's the observable behavior?
+4. Try printing tensor shapes and values
+5. Use the notebook's diagnostic cells
+6. Remember: The satisfaction of finding the bug is worth the struggle!
+
+**Need solutions?** See `SOLUTIONS.md` (but try not to peek too early!)
 
 ## 🎉 After Completion
 
@@ -224,4 +209,3 @@ This challenge is built on top of [nanochat](https://github.com/karpathy/nanocha
 ---
 
 **Good luck, and happy debugging!** 🐛🔍
-
