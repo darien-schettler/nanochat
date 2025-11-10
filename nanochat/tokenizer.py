@@ -224,15 +224,17 @@ class RustBPETokenizer:
 
         if isinstance(text, str):
             ids = self.enc.encode_ordinary(text)
-            if prepend is not None:
-                ids.insert(0, prepend_id) # TODO: slightly inefficient here? :( hmm
+            # BUG 1: Commented out BOS token prepending - this will cause issues!
+            # if prepend is not None:
+            #     ids.insert(0, prepend_id) # TODO: slightly inefficient here? :( hmm
             if append is not None:
                 ids.append(append_id)
         elif isinstance(text, list):
             ids = self.enc.encode_ordinary_batch(text, num_threads=num_threads)
-            if prepend is not None:
-                for ids_row in ids:
-                    ids_row.insert(0, prepend_id) # TODO: same
+            # BUG 1: Same issue for batch encoding
+            # if prepend is not None:
+            #     for ids_row in ids:
+            #         ids_row.insert(0, prepend_id) # TODO: same
             if append is not None:
                 for ids_row in ids:
                     ids_row.append(append_id)
