@@ -1,0 +1,37 @@
+# Core dependencies for nanochat
+torch>=2.0.0
+numpy>=1.24.0
+
+# Data processing
+datasets>=4.0.0
+tokenizers>=0.22.0
+tiktoken>=0.11.0
+regex>=2024.9.1
+
+# Utilities
+psutil>=7.1.0
+requests>=2.31.0
+tqdm>=4.65.0
+
+# Optional: Logging and monitoring
+wandb>=0.21.3
+
+# Optional: Web serving (for chat interface)
+fastapi>=0.117.1
+uvicorn>=0.36.0
+
+# For building Rust tokenizer
+maturin>=1.7.0
+setuptools>=80.9.0
+
+# For interview notebooks
+matplotlib>=3.7.0
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+ipython>=8.12.0
+ipykernel>=6.25.0
+
+# Note: This project uses a custom Rust BPE tokenizer that needs to be built separately.
+# After installing these requirements, run:
+#   maturin develop --release --manifest-path rustbpe/Cargo.toml
+
