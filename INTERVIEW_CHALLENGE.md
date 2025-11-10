@@ -66,9 +66,10 @@ maturin develop --release --manifest-path rustbpe/Cargo.toml
 ## 📚 Challenge Structure
 
 ### Level 1: Easy - Tokenizer & Data Loading
-**Branch:** `bug-hunt-easy`  
-**Notebook:** `tokenizer_debug.ipynb`  
-**Bugs:** 3  
+**Branch:** `bug-hunt-easy`
+**Notebook:** `level1_challenge.ipynb`
+**Tests:** `tests/test_level1.py`
+**Bugs:** 3
 **Estimated time:** 30-45 minutes
 
 Topics covered:
@@ -79,13 +80,15 @@ Topics covered:
 
 ```bash
 git checkout bug-hunt-easy
-jupyter notebook tokenizer_debug.ipynb
+jupyter notebook level1_challenge.ipynb
+# Or run tests: pytest tests/test_level1.py -v
 ```
 
 ### Level 2: Medium - Training Pipeline
-**Branch:** `bug-hunt-medium`  
-**Notebook:** `training_pipeline_debug.ipynb`  
-**Bugs:** 4  
+**Branch:** `bug-hunt-medium`
+**Notebook:** `level2_challenge.ipynb`
+**Tests:** `tests/test_level2.py`
+**Bugs:** 4
 **Estimated time:** 1-2 hours
 
 Topics covered:
@@ -96,12 +99,14 @@ Topics covered:
 
 ```bash
 git checkout bug-hunt-medium
-jupyter notebook training_pipeline_debug.ipynb
+jupyter notebook level2_challenge.ipynb
+# Or run tests: pytest tests/test_level2.py -v
 ```
 
 ### Level 3: Hard - Architecture & Performance
 **Branch:** `bug-hunt-hard`  
-**Notebook:** `architecture_challenges.ipynb`  
+**Notebook:** `level3_challenge.ipynb`  
+**Tests:** `tests/test_level3.py`  
 **Bugs:** 5  
 **Estimated time:** 2-3 hours
 
@@ -114,7 +119,8 @@ Topics covered:
 
 ```bash
 git checkout bug-hunt-hard
-jupyter notebook architecture_challenges.ipynb
+jupyter notebook level3_challenge.ipynb
+# Or run tests: pytest tests/test_level3.py -v
 ```
 
 ## 🎓 Learning Objectives
